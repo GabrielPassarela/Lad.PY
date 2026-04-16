@@ -1,6 +1,17 @@
+import validação
+
 def cadastrar_eleitor():
-    
-    print("\n  Em desenvolvimento.")
+    nome = input("Digite o nome completo do eleitor: ").strip()
+    cpf = input("Digite o CPF do eleitor: ").strip()
+    mesario = input("Você é mesário? (1 - Sim, 0 - Não): ").strip()
+    titulo_de_eleitor = input("Digite o número do título de eleitor: ").strip()
+        
+    if not (validação.validaçao(cpf) and validação.validaçao_titulo(titulo_de_eleitor)):
+        print("Documentos inválidos!")
+        return
+
+    print("\n  Eleitor cadastrado com sucesso!")
+    return
 
 
 def editar_eleitor():

@@ -1,18 +1,7 @@
-from database import conectar
-
-teste = conectar()
-
-if teste:
-    print(" Conectado")
-    teste.close()
-else:
-    print("Não conectou")
 
 import menus
 
-
 import operacoes
-
 
 opc_principal = -1
 
@@ -23,7 +12,7 @@ while opc_principal != 0:
     
 
    
-    match opc_principal:
+    match opc_principal: 
 
         case 1:  # Gerenciamento
             opc_gerenciamento = -1
