@@ -47,7 +47,30 @@ def cadastrar_eleitor():
 
 
 def buscar_eleitor():
-    print("\n  Em desenvolvimento.")
+    cpf = input("Digite o CPF do eleitor a buscar: ").strip()
+
+    try:
+        conn = database.conectar()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("SELECT * FROM ELEITORES WHERE cpf = %s", (cpf,))
+        eleitor = cursor.fetchone()
+
+        if eleitor:
+            print("\n  --- Eleitor encontrado ---")
+            print(f"  Nome:    {eleitor['nome_completo']}")
+            print(f"  CPF:     {eleitor['cpf']}")
+            print(f"  Título:  {eleitor['titulo_eleitor']}")
+            print(f"  Mesário: {'Sim' if eleitor['mesário'] else 'Não'}")
+            print(f"  Votou:   {'Sim' if eleitor['votou'] else 'Não'}")
+        else:
+            print("\n  Eleitor não encontrado.")
+
+    except Exception as e:
+        print(f"\n  Erro ao buscar: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def editar_eleitor():
