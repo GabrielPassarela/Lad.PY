@@ -57,7 +57,23 @@ def remover_eleitor():
     print("\n  Em desenvolvimento.")
 
 def listar_eleitores():
-        print("\n  Em desenvolvimento.")
+    conn = database.conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM eleitores")
+    resultados = cursor.fetchall()
+
+    for resultado in resultados:
+        print(f"\nID: {resultado[0]}")
+        print(f"Nome: {resultado[1]}")
+        print(f"Título: {resultado[2]}")
+        print(f"CPF: {resultado[3]}")
+        print(f"Mesário: {'Sim' if resultado[4] else 'Não'}")
+        print(f"Votou: {'Sim' if resultado[6] else 'Não'}")
+        print("--------------------------------------------------")
+
+    cursor.close()
+    conn.close()
 
 def cadastrar_candidato():
     print("\n  Em desenvolvimento.")
