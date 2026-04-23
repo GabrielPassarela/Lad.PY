@@ -1,5 +1,6 @@
 def validacao(cpf):
     cpf_str = str(cpf).strip()
+    cpf_str = cpf_str.replace(".", "").replace("-", "")
     if len(cpf_str) != 11 or not cpf_str.isdigit():
         print("CPF invalido.")
         return False
@@ -22,21 +23,30 @@ def validacao(cpf):
     
 def validacao_titulo(titulo_de_eleitor):
     t_str = str(titulo_de_eleitor).strip()
+    t_str = t_str.replace(".", "").replace("-", "")
 
     if not t_str.isdigit() or len(t_str) != 12:
         print("Erro.")
         return False
+    
 
-    soma1 = 0
-    for i in range(8):
-        soma1 += int(t_str[i]) * (i + 2)
-    digito1 = soma1 % 11
-    if digito1 == 0 or digito1 == 1:
-        digito1 = 0
+    calculo1 = sum(int(t_str[i]) * (2 + i) for i in range(8))
+    primeirodigito = calculo1 % 11
+    if primeirodigito == 10:
+        primeirodigito = 0
+    
+    if primeirodigito == 0 and int(t_str[8]) == 0 and int(t_str[9]) == 1 or int(t_str[8]) == 0 and int(t_str[9]) == 2:
+        primeirodigito = 1
 
-    soma2 = int(t_str[8]) * 7 + int(t_str[9]) * 8 + digito1 * 9
-    digito2 = soma2 % 11
-    if digito2 == 0 or digito2 == 1:
-        digito2 = 0
+    calculo2 = (int(t_str[8]) * 7 ) + (int(t_str[9]) * 8) + (int(t_str[10]) * 9)
+    segundodigito = calculo2 % 11
+    if segundodigito == 10:
+        segundodigito = 0
+        
+    if segundodigito == 0 and int(t_str[8]) == 0 and int(t_str[9]) == 1 or int(t_str[8]) == 0 and int(t_str[9]) == 2:
+        segundodigito = 1
 
-    return int(t_str[10]) == digito1 and int(t_str[11]) == digito2
+    if primeirodigito == int(t_str[10]) and segundodigito == int(t_str[11]):
+        return True
+    else:
+        return False

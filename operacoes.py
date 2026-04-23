@@ -12,16 +12,18 @@ def gerar_chave():
 def cadastrar_eleitor():
     nome = input("Digite o nome completo do eleitor: ").strip()
     cpf = input("Digite o CPF do eleitor: ").strip()
+    
+    while not validacao.validacao(cpf):
+        print("CPF inválido! Tente novamente.")
+        cpf = input("Digite o CPF do eleitor: ").strip()
+    
     mesario = input("Você é mesário? (1 - Sim, 0 - Não): ").strip()
     titulo_de_eleitor = input("Digite o número do título de eleitor: ").strip()
 
-    if not validacao.validacao(cpf):
-        print("CPF inválido!")
-        return
-    if not validacao.validacao_titulo(titulo_de_eleitor):
-        print("Título de eleitor inválido!")
-        return
-
+    while not validacao.validacao_titulo(titulo_de_eleitor):
+        print("Título de eleitor inválido! Tente novamente.")
+        titulo_de_eleitor = input("Digite o número do título de eleitor: ").strip()
+    
     chave_acesso = gerar_chave()
 
     try:
