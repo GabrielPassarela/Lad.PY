@@ -147,7 +147,85 @@ def autenticar_mesario():
 
 
 def registrar_voto():
-    print("\n  Em desenvolvimento.")
+    print("\n  --------------------------------------------------")
+    print("               REGISTRAR VOTO")
+    print("  --------------------------------------------------")
+
+    # Autenticar eleitor
+    titulo_eleitor = input("  Digite seu título de eleitor: ").strip()
+    cpf = input("  Digite os 4 primeiros dígitos do seu CPF: ").strip()
+    chave = input("  Digite sua chave de acesso: ").strip()
+
+    try:
+        conn = database.conectar()
+        cursor = conn.cursor(dictionary=True)
+
+        # Verifica se o eleitor existe, não é mesário e ainda não votou
+        cursor.execute("""
+            SELECT * FROM eleitores 
+            WHERE titulo_eleitor = %s 
+            AND cpf LIKE %s 
+            AND chave_acesso = %s 
+            AND mesário = 0
+        """, (titulo_eleitor, f"{cpf}%", chave))
+
+        eleitor = cursor.fetchone()
+
+        if not eleitor:
+            print("\n  Dados inválidos ou eleitor não encontrado.")
+            logs.log_alerta_acesso_negado("tentativa de voto inválida")
+            return
+
+        if eleitor['votou']:
+            print("\n  Este eleitor já votou.")
+            logs.log_alerta_acesso_negado("tentativa de voto duplicado")
+            return
+
+        # Exibir candidatos disponíveis
+        cursor.execute("SELECT id, nome FROM CANDIDATOS")
+        candidatos = cursor.fetchall()
+
+        if not candidatos:
+            print("\n  Nenhum candidato cadastrado.")
+            return
+
+        print("\n  --- Candidatos disponíveis ---")
+        for c in candidatos:
+            print(f"  [{c['id']}] {c['nome']}")
+
+        candidato_id = int(input("\n  Digite o ID do candidato: ").strip())
+
+        # Verifica se o ID informado existe
+        ids_validos = [c['id'] for c in candidatos]
+        if candidato_id not in ids_validos:
+            print("\n  Candidato inválido.")
+            return
+
+        # Gerar protocolo e registrar voto
+        protocolo = f"PROT-{random.randint(100000, 999999)}"
+
+        cursor.execute("""
+            INSERT INTO VOTOS (candidato_id, data_hora, protocolo) 
+            VALUES (%s, NOW(), %s)
+        """, (candidato_id, protocolo))
+
+        # Marcar eleitor como votou
+        cursor.execute("""
+            UPDATE eleitores SET votou = 1 
+            WHERE titulo_eleitor = %s
+        """, (titulo_eleitor,))
+
+        conn.commit()
+
+        print("\n  Voto registrado com sucesso!")
+        print(f"  Protocolo: {protocolo}")
+        print("  --------------------------------------------------")
+
+    except Exception as e:
+        print(f"\n  Erro ao registrar voto: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 def encerrar_votacao():
    
@@ -222,3 +300,4 @@ def votos_por_partido():
 
 def validacao_integridade():
     print("\n  Em desenvolvimento.")
+
