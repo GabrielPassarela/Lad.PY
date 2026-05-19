@@ -417,4 +417,33 @@ def votos_por_partido():
         conn.close()
 
 def validacao_integridade():
-        print("\n  Em desenvolvimento.")
+    print("\n  --------------------------------------------------")
+    print("           VALIDAÇÃO DE INTEGRIDADE")
+    print("  --------------------------------------------------")
+
+    try:
+        conn = database.conectar()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("SELECT COUNT(*) AS total FROM VOTOS")
+        total_votos = cursor.fetchone()['total']
+
+        cursor.execute("SELECT COUNT(*) AS total FROM ELEITORES WHERE votou = 1")
+        total_votaram = cursor.fetchone()['total']
+
+        print(f"  Votos registrados na urna:      {total_votos}")
+        print(f"  Eleitores marcados como votou:  {total_votaram}")
+        print("  --------------------------------------------------")
+
+        if total_votos == total_votaram:
+            print("  RESULTADO: Eleição ÍNTEGRA. Nenhuma inconsistência encontrada.")
+        else:
+            print("  RESULTADO: INCONSISTÊNCIA DETECTADA! Os números não coincidem.")
+
+        print("  --------------------------------------------------")
+
+    except Exception as e:
+        print(f"\n  Erro ao validar integridade: {e}")
+    finally:
+        cursor.close()
+        conn.close()
