@@ -9,18 +9,15 @@ MOD = 26
 
 
 def texto_para_numeros(texto):
-    """Converte cada letra do texto em seu índice (A=0 … Z=25)."""
     texto = texto.upper().replace(" ", "")
     return [ord(c) - ord('A') for c in texto if c.isalpha()]
 
 
 def numeros_para_texto(numeros):
-    """Converte uma lista de índices de volta em texto."""
     return ''.join([chr(int(n) + ord('A')) for n in numeros])
 
 
 def ajustar_texto(texto):
-    """Garante que o texto tenha comprimento par (padding com 'X')."""
     texto = texto.upper().replace(" ", "")
     texto = ''.join(c for c in texto if c.isalpha())
     if len(texto) % 2 != 0:
@@ -29,10 +26,6 @@ def ajustar_texto(texto):
 
 
 def numero_para_letra(texto):
-    """
-    Converte cada dígito em uma letra: '0'→'A', '1'→'B' … '9'→'J'.
-    Letras já presentes são mantidas em maiúsculas.
-    """
     resultado = ""
     for c in str(texto):
         if c.isdigit():
@@ -43,15 +36,10 @@ def numero_para_letra(texto):
 
 
 def letra_para_numero(texto):
-    """
-    Reverso de numero_para_letra:
-    'A'→'0', 'B'→'1' … 'J'→'9'.
-    Letras fora desse intervalo são mantidas.
-    """
     resultado = ""
     for c in texto.upper():
-        valor = ord(c) - 65          # A=0, B=1, …
-        if 0 <= valor <= 9:          # só converte A-J (dígitos 0-9)
+        valor = ord(c) - 65         
+        if 0 <= valor <= 9:
             resultado += str(valor)
         else:
             resultado += c
@@ -60,7 +48,6 @@ def letra_para_numero(texto):
 
 
 def multiplicar_matriz(matriz, bloco):
-    """Multiplica uma matriz 2×2 por um vetor coluna [a, b] mod MOD."""
     resultado = []
     for i in range(2):
         valor = (matriz[i][0] * bloco[0] + matriz[i][1] * bloco[1]) % MOD
@@ -69,7 +56,6 @@ def multiplicar_matriz(matriz, bloco):
 
 
 def inversa_modular(numero):
-    """Retorna o inverso modular de 'numero' em Z_26."""
     numero = numero % MOD
     for i in range(1, MOD):
         if (numero * i) % MOD == 1:
@@ -78,7 +64,6 @@ def inversa_modular(numero):
 
 
 def inversa_modular_matriz(matriz):
-    """Calcula a inversa modular de uma matriz 2×2 em Z_26."""
     a, b = matriz[0][0], matriz[0][1]
     c, d = matriz[1][0], matriz[1][1]
 
@@ -99,11 +84,6 @@ def inversa_modular_matriz(matriz):
 
 
 def criptografar_hill(texto):
-    """
-    Recebe uma string já composta apenas por letras (A-Z) e
-    retorna o texto cifrado pela Cifra de Hill.
-    A conversão de dígitos para letras deve ser feita ANTES de chamar esta função.
-    """
     texto = ajustar_texto(texto)
     numeros = texto_para_numeros(texto)
     resultado = []
@@ -117,10 +97,6 @@ def criptografar_hill(texto):
 
 
 def descriptografar_hill(texto):
-    """
-    Recebe texto cifrado (letras A-Z) e retorna o texto descriptografado.
-    A conversão de letras de volta para dígitos deve ser feita DEPOIS, se necessário.
-    """
     numeros = texto_para_numeros(texto)
     chave_inv = inversa_modular_matriz(CHAVE)
     resultado = []
