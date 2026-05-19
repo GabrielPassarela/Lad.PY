@@ -76,10 +76,6 @@ def descriptografar_hill(texto):
     return numeros_para_texto(resultado)
 
 
-# CPF
-# Antes da criptografia: 12345678901
-# Depois da criptografia: resultado da Cifra de Hill
-
 def criptografar_cpf(cpf):
     cpf_letras = numero_para_letra(cpf)
     return criptografar_hill(cpf_letras)
@@ -90,10 +86,6 @@ def descriptografar_cpf(cpf_criptografado):
     return letra_para_numero(cpf_letras)
 
 
-# Chave de Acesso
-# Padrão: 2 primeiras letras do primeiro nome + 1ª letra do segundo nome + 4 dígitos aleatórios
-# Exemplo original (Eleitor: André Silva): ANS4821
-# Exemplo armazenado (criptografado): resultado da Cifra de Hill
 
 def gerar_chave_acesso(nome_completo):
     partes = nome_completo.strip().upper().split()
@@ -115,11 +107,6 @@ def criptografar_chave_acesso(chave):
 def descriptografar_chave_acesso(chave_criptografada):
     return descriptografar_hill(chave_criptografada)
 
-
-# Protocolo de Votação
-# Padrão: "V" + 2 letras aleatórias + Ano (26) + Número do candidato (2 dígitos) + 5 dígitos aleatórios
-# Exemplo original (voto no candidato 99): VRT269950134
-# Exemplo armazenado (criptografado): resultado da Cifra de Hill
 
 def gerar_protocolo(numero_candidato):
     letras = ''.join(random.choices(string.ascii_uppercase, k=2))
