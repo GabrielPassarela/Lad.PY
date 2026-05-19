@@ -245,7 +245,8 @@ def encerrar_votacao():
             eleitor = cursor.fetchone()
             if eleitor:
                 confirmacao = input("Deseja realmente encerrar a votacao? (Sim/Nao): ")
-                if confirmacao != "sim":
+                confirmacao2 = confirmacao.lower()
+                if confirmacao2 != "sim":
                     print("Encerramento cancelado.")
                 else:
                     chave_confirmacao = input("Digite sua chave de acesso novamente: ")
@@ -290,13 +291,53 @@ def exibir_protocolos():
             cursor.close()
             conn.close()
 def boletim_urna():
-        print("\n  Em desenvolvimento.")
+    print("\n  --------------------------------------------------")
+    print("               BOLETIM DE URNA")
+    print("  --------------------------------------------------")
+
+    try:
+        conn = database.conectar()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT CANDIDATOS.nome, CANDIDATOS.numerodevotacao, CANDIDATOS.partido, COUNT(VOTOS.id) as total_votos
+            FROM CANDIDATOS
+            LEFT JOIN VOTOS ON VOTOS.candidato_id = CANDIDATOS.id
+            GROUP BY CANDIDATOS.id, CANDIDATOS.nome, CANDIDATOS.numerodevotacao, CANDIDATOS.partido
+            ORDER BY CANDIDATOS.nome ASC
+        """)
+
+        candidatos = cursor.fetchall()
+
+        if not candidatos:
+            print("  Nenhum candidato cadastrado.")
+            return
+
+        for c in candidatos:
+            print(f"  {c['nome']} (Nº {c['numerodevotacao']} - {c['partido']}): {c['total_votos']} voto(s)")
+
+        vencedor = max(candidatos, key=lambda c: c['total_votos'])
+
+        print("\n  --------------------------------------------------")
+        print("                   VENCEDOR")
+        print("  --------------------------------------------------")
+        print(f"  Nome:        {vencedor['nome']}")
+        print(f"  Número:      {vencedor['numerodevotacao']}")
+        print(f"  Partido:     {vencedor['partido']}")
+        print(f"  Total votos: {vencedor['total_votos']}")
+        print("  --------------------------------------------------")
+
+    except Exception as e:
+        print(f"\n  Erro ao exibir boletim: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 def estatistica_comparecimento():
-        print("\n  Em desenvolvimento.")
+    print("\n  Em desenvolvimento.")
 
 def votos_por_partido():
-        print("\n  Em desenvolvimento.")
+    print("\n  Em desenvolvimento.")
 
 def validacao_integridade():
-        print("\n  Em desenvolvimento.")
+    print("\n  Em desenvolvimento.")
